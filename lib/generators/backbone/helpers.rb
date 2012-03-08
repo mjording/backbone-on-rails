@@ -5,6 +5,10 @@ module Backbone
       def asset_path
         "app/assets"
       end
+      
+      def js_spec_path
+        "spec/javascripts"
+      end
 
       def js_path
         "#{asset_path}/javascripts"

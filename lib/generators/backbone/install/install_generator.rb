@@ -20,6 +20,7 @@ module Backbone
                                 :desc => "Javascript manifest file to modify (or create)"
 
       def inject_backbone
+        #libs = ['underscore', 'backbone','jasmine', 'sinon','jasmine-sinon']
         libs = ['underscore', 'backbone']
         manifest = options[:manifest]
         paths = [ "../templates#{namespaced_path}", ".#{namespaced_path}/models",

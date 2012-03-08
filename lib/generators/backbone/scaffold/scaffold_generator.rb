@@ -18,8 +18,30 @@ module Backbone
         @jst = js ? ".ejs" : ".eco"
       end
 
+      def create_rails_model
+        invoke "#{generator_rails_options[:orm]}:model", name_and_attributes_array
+      end
+
+      def create_rails_model_test
+        invoke "#{generator_rails_options[:test_framework]}:model", [name]
+      end
+
+      def create_rails_route
+        # stolen from railties: resource_generator.rb starting on line 18 (add_resource_route)
+        route_config =  regular_class_path.collect{|namespace| "namespace :#{namespace} do " }.join(" ")
+        route_config << "resources :#{file_name.pluralize}"
+        route_config << " end" * regular_class_path.size
+        route route_config
+      end
+
       def create_backbone_model
         template "model#{@ext}", File.join(js_path, namespaced_path, "models", "#{file_name.singularize}#{@ext}")
+      end
+
+      def create_backbone_model_test
+        #template "model_spec#{@ext}", File.join(js_spec_path, namespaced_path, "models", "#{file_name.singularize}_spec#{@ext}")
+        template "model_spec#{@ext}", File.join(js_spec_path, namespaced_path, "#{file_name.singularize}_spec#{@ext}")
+        #invoke "#{generator_rails_options[:test_framework]}:model", [name]
       end
 
       def create_backbone_collection
@@ -39,7 +61,12 @@ module Backbone
         empty_directory File.join(template_path, namespaced_path, file_name.pluralize)
         template "template.jst#{@jst}",  File.join(template_path, namespaced_path, file_name.pluralize, "index.jst#{@jst}")
       end
+      private
 
+      def name_and_attributes_array
+        [name] + attributes.map {|a| "#{a.name}:#{a.type}"}
+      end
+      
     end
   end
 end
